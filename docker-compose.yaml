@@ -1,0 +1,25 @@
+version: "3.3"
+
+services:
+  nextjs:
+    image: nextjs-dev
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./src:/app/src
+
+  postgres:
+    image: postgres:14.3
+    restart: always
+    environment:
+      - DATABASE_NAME=password-manager
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    ports:
+      - "3001:5432"
+
+volumes:
+  postgres:
