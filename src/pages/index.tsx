@@ -1,17 +1,17 @@
 import type { NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
-import { useUser } from "@auth0/nextjs-auth0";
 import { useRouter } from "next/router";
+import { useSession, signIn, signOut } from "next-auth/react";
 
 const Home: NextPage = () => {
-  const { user, error, isLoading } = useUser();
+  const { data: session } = useSession();
   const router = useRouter();
-
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error...</div>;
-  if (user) router.replace("/sites");
-
+  if (session) {
+    const id = session?.id;
+    router.replace(`/passwords/${id}`);
+    return <div>Loading</div>;
+  }
   return (
     <>
       <Head>
@@ -21,12 +21,12 @@ const Home: NextPage = () => {
         <section className="flex flex-col items-center">
           <h1>Password Manager</h1>
           <p>A simple password manager app</p>
-          <a
-            href="/api/auth/login"
+          <button
+            onClick={() => signIn()}
             className=" bg-violet border-2 border-violet rounded p-2 inline-block"
           >
             Login
-          </a>
+          </button>
         </section>
       </main>
     </>
