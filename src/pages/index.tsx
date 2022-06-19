@@ -1,17 +1,10 @@
-import type { NextPage } from "next";
+import type { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
-import Image from "next/image";
 import { useRouter } from "next/router";
-import { useSession, signIn, signOut } from "next-auth/react";
+import { signIn, signOut, getSession } from "next-auth/react";
 
-const Home: NextPage = () => {
-  const { data: session } = useSession();
+const Home: NextPage = ({ name }) => {
   const router = useRouter();
-  if (session) {
-    const id = session?.id;
-    router.replace(`/passwords/${id}`);
-    return <div>Loading</div>;
-  }
   return (
     <>
       <Head>
@@ -21,16 +14,33 @@ const Home: NextPage = () => {
         <section className="flex flex-col items-center">
           <h1>Password Manager</h1>
           <p>A simple password manager app</p>
-          <button
-            onClick={() => signIn()}
-            className=" bg-violet border-2 border-violet rounded p-2 inline-block"
-          >
-            Login
-          </button>
+          {name ? (
+            <button
+              className=" bg-violet border-2 border-violet rounded p-2 inline-block"
+              onClick={() => router.replace(`/passwords/${name}`)}
+            >
+              Go to App
+            </button>
+          ) : (
+            <button
+              onClick={() => signIn()}
+              className=" bg-violet border-2 border-violet rounded p-2 inline-block"
+            >
+              Login
+            </button>
+          )}
         </section>
       </main>
     </>
   );
+};
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const session = await getSession(context);
+  const name = session?.user?.name;
+  return {
+    props: { name },
+  };
 };
 
 export default Home;

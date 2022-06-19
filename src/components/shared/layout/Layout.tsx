@@ -1,5 +1,6 @@
 import React, { ReactNode } from "react";
 import s from "./Layout.module.css";
+import { signOut } from "next-auth/react";
 
 const Layout = ({ children }: { children: ReactNode }) => {
   return (
@@ -7,7 +8,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
       <header className={`${s.header} flex justify-between items-center px-4`}>
         <h1 className="text-xl">Password Manager</h1>
         <div>
-          <a href="/api/auth/logout">Log Out</a>
+          <button onClick={() => signOut()}>Log Out</button>
         </div>
       </header>
       <nav className={s.nav}>
