@@ -4,8 +4,18 @@ import type { AppProps } from "next/app";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
 import { SessionProvider, signIn, useSession } from "next-auth/react";
+import { NextComponentType } from "next";
+import { withTRPC } from "@trpc/next";
+import { AppRouter } from "./api/trpc/[trpc]";
 
-function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
+type CustomPageProps = AppProps & {
+  Component: NextComponentType & { auth?: boolean };
+};
+
+const MyApp = ({
+  Component,
+  pageProps: { session, ...pageProps },
+}: CustomPageProps) => {
   const [queryClient] = useState(() => new QueryClient());
 
   return (
@@ -20,7 +30,7 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
       </SessionProvider>
     </QueryClientProvider>
   );
-}
+};
 
 const Auth = ({ children }: { children: React.ReactNode }) => {
   const { status } = useSession();
@@ -34,7 +44,29 @@ const Auth = ({ children }: { children: React.ReactNode }) => {
       </div>
     );
   }
-  return children;
+  return <>{children}</>;
 };
 
-export default MyApp;
+export default withTRPC<AppRouter>({
+  config({ ctx }) {
+    /**
+     * If you want to use SSR, you need to use the server's full URL
+     * @link https://trpc.io/docs/ssr
+     */
+    const url = process.env.VERCEL_URL
+      ? `https://${process.env.VERCEL_URL}/api/trpc`
+      : "http://localhost:3000/api/trpc";
+
+    return {
+      url,
+      /**
+       * @link https://react-query.tanstack.com/reference/QueryClient
+       */
+      // queryClientConfig: { defaultOptions: { queries: { staleTime: 60 } } },
+    };
+  },
+  /**
+   * @link https://trpc.io/docs/ssr
+   */
+  ssr: false,
+})(MyApp);

@@ -2,10 +2,16 @@ import React from "react";
 import Layout from "../../components/shared/layout/Layout";
 import Image from "next/image";
 import { useRouter } from "next/router";
+import { trpc } from "../../utils/trpc";
 
 const Name = () => {
   const router = useRouter();
-  console.log(router.query);
+  const { data, isLoading } = trpc.useQuery(["getSites"]);
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+  console.log(data);
   return (
     <Layout>
       <section className="text-right">
