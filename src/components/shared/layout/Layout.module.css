@@ -18,4 +18,5 @@
 
 .content {
   grid-area: content;
+  @apply p-2;
 }

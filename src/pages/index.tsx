@@ -1,9 +1,15 @@
-import type { GetServerSideProps, NextPage } from "next";
+import type {
+  GetServerSideProps,
+  NextPage,
+  InferGetServerSidePropsType,
+} from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { signIn, signOut, getSession } from "next-auth/react";
 
-const Home: NextPage = ({ name }) => {
+const Home: NextPage = ({
+  name,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter();
   return (
     <>
@@ -17,7 +23,9 @@ const Home: NextPage = ({ name }) => {
           {name ? (
             <button
               className=" bg-violet border-2 border-violet rounded p-2 inline-block"
-              onClick={() => router.replace(`/passwords/${name}`)}
+              onClick={() => {
+                router.replace(`/passwords/${name.split(" ").join("")}`);
+              }}
             >
               Go to App
             </button>
@@ -39,7 +47,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await getSession(context);
   const name = session?.user?.name;
   return {
-    props: { name },
+    props: { name: name ?? null },
   };
 };
 
