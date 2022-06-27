@@ -1,65 +1,107 @@
-import { FormEvent, useId } from "react";
+import React, { ChangeEvent, FormEvent, useId, useState } from "react";
 import Head from "../../../../components/shared/Head";
+import { useSession } from "next-auth/react";
+import { trpc } from "../../../../utils/trpc";
+import { Session } from "next-auth";
+import { useRouter } from "next/router";
+// import
 
 const New = () => {
   const id = useId();
+  const router = useRouter();
+  const mutation = trpc.useMutation(["createSite"]);
+  console.log(mutation);
+  const session = useSession();
+  const [inputs, setInputs] = useState({ name: "", email: "", password: "" });
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    console.log("test");
+    const data = session.data as Session & { id: string };
+    mutation.mutate({ userId: data.id, ...inputs });
   }
 
   function goBack(e: FormEvent) {
     e.preventDefault();
-    console.log("back");
+    router.back();
   }
+
+  function handleInputs(e: ChangeEvent<HTMLInputElement>, type: string) {
+    setInputs({
+      ...inputs,
+      [type]: e.currentTarget.value,
+    });
+  }
+
   return (
     <>
       <Head title="Add new password" />
-      <main className="grid justify-center pt-60">
+      <main className="">
         <form
-          className="grid grid-cols-2 gap-y-4 max-w-xl"
+          className="grid grid-cols-1 gap-2 mx-auto max-w-xs p-2"
           onSubmit={handleSubmit}
         >
-          <label
-            htmlFor={id + "-name"}
-            className="fit-content justify-self-center"
-          >
-            Name
-          </label>
-          <input
+          <h1 className="text-2xl">Add New Site</h1>
+          <div className="h-8"></div>
+          <Row
+            type="name"
+            input={inputs.name}
+            handleInputs={handleInputs}
             id={id + "-name"}
-            type="text"
-            className="border-b-2 border-black"
+            label="Name"
           />
-          <label
-            htmlFor={id + "-email"}
-            className="fit-content justify-self-center"
-          >
-            Email
-          </label>
-          <input
+          <Row
+            type="email"
+            input={inputs.email}
+            handleInputs={handleInputs}
             id={id + "-email"}
-            type="text"
-            className="border-b-2 border-black"
+            label="Email"
           />
-          <label
-            htmlFor={id + "-password"}
-            className="fit-content justify-self-center"
-          >
-            Password
-          </label>
-          <input
+          <Row
+            type="password"
+            input={inputs.password}
+            handleInputs={handleInputs}
             id={id + "-password"}
-            type="text"
-            className="border-2 border-black"
+            label="Password"
           />
-          <div className="col-span-2"></div>
-          <button onClick={goBack}>Back</button>
-          <button>Add</button>
+          <div className="h-5"></div>
+          <div className="flex max-w-xs">
+            <button className="flex-1" onClick={goBack}>
+              Back
+            </button>
+            <button className="flex-1">Add</button>
+          </div>
         </form>
       </main>
     </>
+  );
+};
+
+const Row = ({
+  id,
+  input,
+  label,
+  type,
+  handleInputs,
+}: {
+  id: string;
+  label: string;
+  type: string;
+  input: string;
+  handleInputs: (e: ChangeEvent<HTMLInputElement>, type: string) => void;
+}) => {
+  return (
+    <div className="flex justify-between">
+      <label htmlFor={id} className="w-32 grid ">
+        <div>{label}</div>
+      </label>
+      <input
+        id={id}
+        value={input}
+        onChange={(e) => handleInputs(e, type)}
+        type="text"
+        className=" border-b-2 border-black w-full"
+      />
+    </div>
   );
 };
 
