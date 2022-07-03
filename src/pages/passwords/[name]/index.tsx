@@ -6,7 +6,7 @@ import { trpc } from "../../../utils/trpc";
 
 const Name = () => {
   const router = useRouter();
-  const { data, isLoading } = trpc.useQuery(["getSites"]);
+  const { data, isLoading } = trpc.useQuery(["site.getSites"]);
   const [sites, setSites] = useState(data ?? []);
 
   useEffect(() => {

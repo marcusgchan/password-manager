@@ -6,7 +6,7 @@ import { ReactQueryDevtools } from "react-query/devtools";
 import { SessionProvider, signIn, useSession } from "next-auth/react";
 import { NextComponentType } from "next";
 import { withTRPC } from "@trpc/next";
-import { AppRouter } from "./api/trpc/[trpc]";
+import { AppRouter } from "../server/routers/app";
 
 type CustomPageProps = AppProps & {
   Component: NextComponentType & { auth?: boolean };

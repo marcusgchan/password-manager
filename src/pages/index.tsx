@@ -6,11 +6,14 @@ import type {
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { signIn, signOut, getSession } from "next-auth/react";
+import { getToken } from "next-auth/jwt";
 
 const Home: NextPage = ({
   name,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter();
+  // console.log(name);
+  // if (name) router.replace(`/passwords/${name.split(" ").join("")}`);
   return (
     <>
       <Head>

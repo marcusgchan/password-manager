@@ -9,8 +9,7 @@ import { useRouter } from "next/router";
 const New = () => {
   const id = useId();
   const router = useRouter();
-  const mutation = trpc.useMutation(["createSite"]);
-  console.log(mutation);
+  const mutation = trpc.useMutation("createSite");
   const session = useSession();
   const [inputs, setInputs] = useState({ name: "", email: "", password: "" });
 
