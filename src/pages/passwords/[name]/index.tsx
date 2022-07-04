@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import Layout from "../../../components/shared/layout/Layout";
+import Layout from "../../../shared/components/layout/Layout";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { trpc } from "../../../utils/trpc";
