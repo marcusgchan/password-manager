@@ -21,7 +21,6 @@ export const siteRouter = trpc
   .query("getSites", {
     async resolve({ ctx }) {
       if (!ctx) throw new TRPCError({ code: "UNAUTHORIZED" });
-      encrypt("test");
       return await prisma.site.findMany();
     },
   })
@@ -29,21 +28,19 @@ export const siteRouter = trpc
     input: z.object({
       userId: z.string().max(255),
       name: z.string().max(255),
-      email: z.string().max(255),
-      password: z.string().max(255),
+      email: z.string().email().max(255),
+      password: z.string().email().max(255),
     }),
     async resolve(req) {
-      // hash passwords
-
+      const encryptedPassword = encrypt(req.input.password);
       const data = await prisma.site.create({
         data: {
           ...req.input,
+          password: encryptedPassword,
         },
       });
-      // console.log(data);
       return {
         ...data,
-        test: "hasdf",
       };
     },
   });

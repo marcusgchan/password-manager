@@ -1,17 +1,61 @@
-import React, { ChangeEvent, FormEvent, useId, useState } from "react";
+import React, {
+  ChangeEvent,
+  FormEvent,
+  useId,
+  useState,
+  useEffect,
+} from "react";
 import Head from "../../../../components/shared/Head";
 import { useSession } from "next-auth/react";
 import { trpc } from "../../../../utils/trpc";
 import { Session } from "next-auth";
 import { useRouter } from "next/router";
-// import
+import Notifier from "../../../../components/shared/Notifier";
+
+type Notifier = {
+  message: string | undefined;
+  type: "ERROR" | "SUCCESS";
+};
 
 const New = () => {
   const id = useId();
   const router = useRouter();
-  const mutation = trpc.useMutation("createSite");
+  const mutation = trpc.useMutation("site.createSite", {
+    onError: (error) => {
+      const errorCode = error.shape?.data?.code;
+      setMessageQueue((prev) => [
+        { message: errorCode, type: "ERROR" },
+        ...prev,
+      ]);
+    },
+  });
   const session = useSession();
   const [inputs, setInputs] = useState({ name: "", email: "", password: "" });
+
+  const [shown, setShown] = useState(false);
+  const [messageQueue, setMessageQueue] = useState([] as Notifier[]);
+  const [timer, setTimer] = useState(0);
+  useEffect(() => {
+    if (messageQueue.length > 0) {
+      const id = setInterval(() => {
+        console.log(messageQueue);
+        setMessageQueue((prev: Notifier[]) => {
+          const [, ...rest] = prev;
+          return rest;
+        });
+      }, 1000);
+    }
+    return () => clearInterval(id);
+  }, [messageQueue, id]);
+  useEffect(() => {
+    if (timer > 0) {
+      const id = setInterval(() => {
+        console.log(timer);
+        setTimer((prev) => prev - 1);
+      }, 1000);
+    }
+    return () => clearInterval(id);
+  }, [timer, id]);
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -35,6 +79,9 @@ const New = () => {
     <>
       <Head title="Add new password" />
       <main className="">
+        {mutation.isError && (
+          <Notifier type="ERROR" message={mutation.error.shape?.data.code} />
+        )}
         <form
           className="grid grid-cols-1 gap-2 mx-auto max-w-xs p-2"
           onSubmit={handleSubmit}
