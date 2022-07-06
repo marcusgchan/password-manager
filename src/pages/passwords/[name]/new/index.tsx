@@ -1,45 +1,27 @@
-import React, {
-  ChangeEvent,
-  FormEvent,
-  useId,
-  useState,
-  useEffect,
-} from "react";
+import React, { ChangeEvent, FormEvent, useId, useState, useRef } from "react";
 import Head from "../../../../shared/components/Head";
 import { useSession } from "next-auth/react";
 import { trpc } from "../../../../utils/trpc";
 import { Session } from "next-auth";
 import { useRouter } from "next/router";
-import Notifier from "../../../../shared/components/Notifier";
-import type { Notifier as NotifierType } from "../../../../shared/types";
+import { Notifier as NotifierType } from "../../../../shared/types";
+import { useSnackbarDispatch } from "../../../../contexts/SnackbarContext";
 
 const New = () => {
   const id = useId();
   const router = useRouter();
+  const dispatch = useSnackbarDispatch();
   const mutation = trpc.useMutation("site.createSite", {
     onError: (error) => {
       const errorCode = error.shape?.data?.code;
-      setMessageQueue((prev) => [
-        { message: errorCode, type: "ERROR" },
-        ...prev,
-      ]);
+      dispatch({
+        type: "QUEUE_NOTIFICATION",
+        payload: { message: errorCode, type: "ERROR" },
+      });
     },
   });
   const session = useSession();
   const [inputs, setInputs] = useState({ name: "", email: "", password: "" });
-
-  const [messageQueue, setMessageQueue] = useState([] as NotifierType[]);
-  useEffect(() => {
-    if (messageQueue.length > 0) {
-      const id = setInterval(() => {
-        setMessageQueue((prev: NotifierType[]) => {
-          const [, ...rest] = prev;
-          return rest;
-        });
-      }, 2000);
-    }
-    return () => clearInterval(id);
-  }, [messageQueue, id]);
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -63,7 +45,6 @@ const New = () => {
     <>
       <Head title="Add new password" />
       <main className="">
-        <Notifier messageQueue={messageQueue} />
         <form
           className="grid grid-cols-1 gap-2 mx-auto max-w-xs p-2"
           onSubmit={handleSubmit}

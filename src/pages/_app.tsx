@@ -7,6 +7,7 @@ import { SessionProvider, signIn, useSession } from "next-auth/react";
 import { NextComponentType } from "next";
 import { withTRPC } from "@trpc/next";
 import { AppRouter } from "../server/routers/app";
+import { SnackbarProvider } from "../contexts/SnackbarContext";
 
 type CustomPageProps = AppProps & {
   Component: NextComponentType & { auth?: boolean };
@@ -21,11 +22,13 @@ const MyApp = ({
   return (
     <QueryClientProvider client={queryClient}>
       <SessionProvider session={session}>
-        {Component.auth ? (
-          <Auth>{<Component {...pageProps} />}</Auth>
-        ) : (
-          <Component {...pageProps} />
-        )}
+        <SnackbarProvider>
+          {Component.auth ? (
+            <Auth>{<Component {...pageProps} />}</Auth>
+          ) : (
+            <Component {...pageProps} />
+          )}
+        </SnackbarProvider>
         <ReactQueryDevtools initialIsOpen={false} />
       </SessionProvider>
     </QueryClientProvider>
