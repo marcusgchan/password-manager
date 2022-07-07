@@ -16,7 +16,7 @@ const New = () => {
       const errorCode = error.shape?.data?.code;
       dispatch({
         type: "QUEUE_NOTIFICATION",
-        payload: { message: errorCode, type: "ERROR" },
+        payload: { message: errorCode, type: "ERROR", id: Date.now() },
       });
     },
   });
