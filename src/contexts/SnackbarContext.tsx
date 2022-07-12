@@ -5,9 +5,7 @@ import React, {
   useReducer,
   useRef,
 } from "react";
-import { Notifier } from "../shared/types";
-
-// type AnimatedSnack = { previousSnack: Notifier };
+import { SnackNotification } from "../shared/types";
 
 const SnackbarContext = createContext<any>(null);
 const SnackbarDispatchContext = createContext<any>(null);
@@ -17,27 +15,27 @@ export function useSnackbarDispatch() {
 }
 
 export function SnackbarProvider({ children }: { children: React.ReactNode }) {
-  const [snacks, dispatch] = useReducer(snacksReducer, [] as Notifier[]);
+  const [snacks, dispatch] = useReducer(
+    snacksReducer,
+    [] as SnackNotification[]
+  );
   const currentSnack = Array.isArray(snacks) && snacks[0];
-  const notificationRef = useRef<HTMLDivElement>();
 
   return (
     <SnackbarContext.Provider value={snacks}>
       <SnackbarDispatchContext.Provider value={dispatch}>
-        {currentSnack && (
-          <Notification
-            {...currentSnack}
-            notificationRef={notificationRef}
-            dispatch={dispatch}
-          />
-        )}
+        {currentSnack && <Notification {...currentSnack} dispatch={dispatch} />}
         {children}
       </SnackbarDispatchContext.Provider>
     </SnackbarContext.Provider>
   );
 }
 
-function snacksReducer(state: Notifier[], action: any) {
+type SnackAction =
+  | { type: "QUEUE_NOTIFICATION"; payload: SnackNotification }
+  | { type: "REMOVE_NOTIFICATION" };
+
+function snacksReducer(state: SnackNotification[], action: SnackAction) {
   switch (action.type) {
     case "QUEUE_NOTIFICATION":
       return [...state, action.payload];
@@ -51,9 +49,14 @@ function snacksReducer(state: Notifier[], action: any) {
   }
 }
 
-function Notification(props: Notifier) {
-  const { message, type, notificationRef, dispatch } = props;
+type Notification = SnackNotification & {
+  dispatch: React.Dispatch<SnackAction>;
+};
+
+function Notification({ message, type, dispatch }: Notification) {
   const animationRef = useRef<Animation>();
+  const notificationRef = useRef<any>();
+
   useEffect(() => {
     if (animationRef.current?.playState === "running") return;
 

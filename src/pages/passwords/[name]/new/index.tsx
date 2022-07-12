@@ -4,7 +4,7 @@ import { useSession } from "next-auth/react";
 import { trpc } from "../../../../utils/trpc";
 import { Session } from "next-auth";
 import { useRouter } from "next/router";
-import { Notifier as NotifierType } from "../../../../shared/types";
+import { SnackNotification as NotifierType } from "../../../../shared/types";
 import { useSnackbarDispatch } from "../../../../contexts/SnackbarContext";
 
 const New = () => {
