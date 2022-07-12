@@ -38,7 +38,7 @@ const Name = () => {
       </section>
       <section>
         {sites.map((site) => {
-          return <div key={site.id}>{site.name}</div>;
+          return <div key={site.id}>{JSON.stringify(site)}</div>;
         })}
       </section>
     </Layout>
