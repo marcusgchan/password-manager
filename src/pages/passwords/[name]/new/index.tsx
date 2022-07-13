@@ -4,8 +4,19 @@ import { useSession } from "next-auth/react";
 import { trpc } from "../../../../utils/trpc";
 import { Session } from "next-auth";
 import { useRouter } from "next/router";
-import { SnackNotification as NotifierType } from "../../../../shared/types";
 import { useSnackbarDispatch } from "../../../../contexts/SnackbarContext";
+import {
+  useForm,
+  SubmitHandler,
+  UseFormRegister,
+  UseFormRegisterReturn,
+} from "react-hook-form";
+
+type Inputs = {
+  name: string;
+  email: string;
+  password: string;
+};
 
 const New = () => {
   const id = useId();
@@ -21,24 +32,21 @@ const New = () => {
     },
   });
   const session = useSession();
-  const [inputs, setInputs] = useState({ name: "", email: "", password: "" });
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm<Inputs>();
 
-  function handleSubmit(e: FormEvent) {
-    e.preventDefault();
-    const data = session.data as Session & { id: string };
-    mutation.mutate({ userId: data.id, ...inputs });
+  function onSubmit(inputs: Inputs) {
+    const user = session.data as Session & { id: string };
+    mutation.mutate({ userId: user.id, ...inputs });
   }
 
   function goBack(e: FormEvent) {
     e.preventDefault();
     router.back();
-  }
-
-  function handleInputs(e: ChangeEvent<HTMLInputElement>, type: string) {
-    setInputs({
-      ...inputs,
-      [type]: e.currentTarget.value,
-    });
   }
 
   return (
@@ -47,28 +55,25 @@ const New = () => {
       <main className="">
         <form
           className="grid grid-cols-1 gap-2 mx-auto max-w-xs p-2"
-          onSubmit={handleSubmit}
+          onSubmit={handleSubmit(onSubmit)}
         >
           <h1 className="text-2xl">Add New Site</h1>
           <div className="h-8"></div>
           <Row
             type="name"
-            input={inputs.name}
-            handleInputs={handleInputs}
+            register={register("name")}
             id={id + "-name"}
             label="Name"
           />
           <Row
             type="email"
-            input={inputs.email}
-            handleInputs={handleInputs}
+            register={register("email")}
             id={id + "-email"}
             label="Email"
           />
           <Row
             type="password"
-            input={inputs.password}
-            handleInputs={handleInputs}
+            register={register("password")}
             id={id + "-password"}
             label="Password"
           />
@@ -87,16 +92,14 @@ const New = () => {
 
 const Row = ({
   id,
-  input,
   label,
   type,
-  handleInputs,
+  register,
 }: {
   id: string;
   label: string;
   type: string;
-  input: string;
-  handleInputs: (e: ChangeEvent<HTMLInputElement>, type: string) => void;
+  register: UseFormRegisterReturn;
 }) => {
   return (
     <div className="flex justify-between">
@@ -105,8 +108,7 @@ const Row = ({
       </label>
       <input
         id={id}
-        value={input}
-        onChange={(e) => handleInputs(e, type)}
+        {...register}
         type="text"
         className=" border-b-2 border-black w-full"
       />
