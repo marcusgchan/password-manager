@@ -71,7 +71,7 @@ model Site {
   password    String   @db.VarChar(255)
   dateCreated DateTime @default(now())
 
-  userId     String       
+  userId     String       @db.VarChar(255)
   user       User         @relation(fields: [userId], references: [id])
   siteUpdate SiteUpdate[]
 
