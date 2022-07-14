@@ -25,7 +25,7 @@ const Home: NextPage = ({
           <p>A simple password manager app</p>
           {name ? (
             <button
-              className=" bg-violet border-2 border-violet rounded p-2 inline-block"
+              className=" bg-blue border-2 border-blue rounded p-2 inline-block"
               onClick={() => {
                 router.replace(`/passwords/${name.split(" ").join("")}`);
               }}
@@ -35,7 +35,7 @@ const Home: NextPage = ({
           ) : (
             <button
               onClick={() => signIn()}
-              className=" bg-violet border-2 border-violet rounded p-2 inline-block"
+              className=" bg-blue border-2 border-blue rounded p-2 inline-block"
             >
               Login
             </button>

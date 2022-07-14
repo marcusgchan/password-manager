@@ -3,11 +3,38 @@ import Layout from "../../../shared/components/layout/Layout";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { trpc } from "../../../utils/trpc";
+import type { Site } from "../../../server/routers/site";
+import {
+  ColumnDef,
+  useReactTable,
+  getCoreRowModel,
+  flexRender,
+} from "@tanstack/react-table";
 
 const Name = () => {
   const router = useRouter();
   const { data, isLoading } = trpc.useQuery(["site.getSites"]);
   const [sites, setSites] = useState(data ?? []);
+
+  const columns: ColumnDef<Site>[] = [
+    {
+      accessorKey: "id",
+    },
+    {
+      accessorKey: "name",
+    },
+    {
+      accessorKey: "email",
+    },
+    {
+      accessorKey: "password",
+    },
+  ];
+  const table = useReactTable({
+    data: sites,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+  });
 
   useEffect(() => {
     if (!isLoading && data) {
@@ -37,9 +64,35 @@ const Name = () => {
         </button>
       </section>
       <section>
-        {sites.map((site) => {
-          return <div key={site.id}>{JSON.stringify(site)}</div>;
-        })}
+        <table>
+          <thead>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <tr key={headerGroup.id}>
+                {headerGroup.headers.map((header) => (
+                  <th key={header.id}>
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                  </th>
+                ))}
+              </tr>
+            ))}
+          </thead>
+          <tbody>
+            {table.getRowModel().rows.map((row) => (
+              <tr key={row.id}>
+                {row.getVisibleCells().map((cell) => (
+                  <td key={cell.id}>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </section>
     </Layout>
   );

@@ -4,11 +4,11 @@ import { z } from "zod";
 import prisma from "../../utils/prismaClient";
 import { encrypt } from "../../utils/cipher";
 
-export const createSiteSchema = z.object({
+const createSiteSchema = z.object({
   userId: z.string().max(255),
   name: z.string().max(255),
   email: z.string().email().max(255),
-  password: z.string().email().max(255),
+  password: z.string().max(255),
 });
 export type Site = z.TypeOf<typeof createSiteSchema>;
 

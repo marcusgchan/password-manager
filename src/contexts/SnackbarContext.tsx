@@ -90,7 +90,7 @@ function Notification({ message, type, dispatch }: Notification) {
   return (
     <div
       ref={notificationRef}
-      className="fixed flex justify-center max-w-sm max-h-20 overflow-y-scroll overflow-x-hidden p-2 leading-tight rounded top-0 left-1/2 -translate-x-1/2 -translate-y-full bg-blue"
+      className="fixed flex justify-center max-w-sm max-h-20 overflow-y-scroll overflow-x-hidden p-2 leading-tight rounded top-0 left-1/2 -translate-x-1/2 -translate-y-full"
     >
       <h3 className="w-full h-full text-ellipsis overflow-clip">{message}</h3>
     </div>

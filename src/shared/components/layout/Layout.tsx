@@ -13,13 +13,13 @@ const Layout = ({ children }: { children: ReactNode }) => {
       </header>
       <nav className={s.nav}>
         <ul className="grid grid-rows-3 h-full">
-          <li className="flex justify-center items-center">
+          <li className="flex justify-center items-center bg-dark-green">
             <button className="w-full h-full">Passwords</button>
           </li>
-          <li className="flex justify-center items-center">
+          <li className="flex justify-center items-center bg-green">
             <button className="w-full h-full">Security Checker</button>
           </li>
-          <li className="flex justify-center items-center">
+          <li className="flex justify-center items-center bg-light-green">
             <button className="w-full h-full">Events</button>
           </li>
         </ul>
