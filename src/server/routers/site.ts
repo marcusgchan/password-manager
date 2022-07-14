@@ -2,7 +2,7 @@ import * as trpc from "@trpc/server";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import prisma from "../../utils/prismaClient";
-import { encrypt } from "../../utils/cipher";
+import { decrypt, encrypt } from "../../utils/cipher";
 
 const createSiteSchema = z.object({
   userId: z.string().max(255),
@@ -14,10 +14,22 @@ export type Site = z.TypeOf<typeof createSiteSchema>;
 
 export const siteRouter = trpc
   .router()
+  .query("getSite", {
+    input: z.number().int().max(255),
+    async resolve(req) {
+      if (!req.ctx) throw new TRPCError({ code: "UNAUTHORIZED" });
+      return await prisma.site.findUnique({ where: { id: req.input } });
+    },
+  })
   .query("getSites", {
     async resolve({ ctx }) {
       if (!ctx) throw new TRPCError({ code: "UNAUTHORIZED" });
-      return await prisma.site.findMany();
+      const encryptedData = await prisma.site.findMany();
+      const data = encryptedData.map((data) => ({
+        ...data,
+        password: decrypt(data.password),
+      }));
+      return data;
     },
   })
   .mutation("createSite", {

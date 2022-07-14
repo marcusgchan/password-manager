@@ -3,7 +3,7 @@ import Layout from "../../../shared/components/layout/Layout";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { trpc } from "../../../utils/trpc";
-import type { Site } from "../../../server/routers/site";
+import type { Site } from "@prisma/client";
 import {
   ColumnDef,
   useReactTable,
@@ -29,7 +29,25 @@ const Name = () => {
     {
       accessorKey: "password",
     },
+    {
+      accessorKey: "dateCreated",
+    },
   ];
+
+  // const columns: ColumnDef<InferQueryOutput<"site.getSite">>[] = [
+  //   {
+  //     accessorKey: "",
+  //   },
+  //   {
+  //     accessorKey: "name",
+  //   },
+  //   {
+  //     accessorKey: "email",
+  //   },
+  //   {
+  //     accessorKey: "password",
+  //   },
+  // ];
   const table = useReactTable({
     data: sites,
     columns,
