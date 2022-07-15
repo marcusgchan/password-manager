@@ -14,6 +14,12 @@ export function encrypt(password: string) {
 
 export function decrypt(cipherText: string) {
   const [encryptedTextString, ivString] = cipherText.split(":");
+
+  if (!ivString || !encryptedTextString)
+    throw new Error(
+      "Encrypted string does not have the correct format to be parsed"
+    );
+
   let iv = Buffer.from(ivString, "hex");
   let encryptedText = Buffer.from(encryptedTextString, "hex");
 
