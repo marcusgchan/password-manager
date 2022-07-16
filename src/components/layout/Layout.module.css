@@ -1,0 +1,22 @@
+.container {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  grid-template-rows: 125px 1fr;
+  grid-template-areas: "header header" "nav content";
+  height: 100vh;
+}
+
+.header {
+  @apply bg-green;
+  grid-area: header;
+}
+
+.nav {
+  @apply bg-violet;
+  grid-area: nav;
+}
+
+.content {
+  grid-area: content;
+  @apply p-2;
+}

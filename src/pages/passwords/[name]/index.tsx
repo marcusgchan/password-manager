@@ -9,12 +9,21 @@ import {
   useReactTable,
   getCoreRowModel,
   flexRender,
+  Row,
 } from "@tanstack/react-table";
 
 const Name = () => {
   const router = useRouter();
   const { data, isLoading } = trpc.useQuery(["site.getSites"]);
   const [sites, setSites] = useState(data ?? []);
+  const [selectedRow, setSelectedRow] = useState({ id: "" });
+
+  const handleShowPassword = (id: string) => {
+    if (id === selectedRow.id) {
+      return setSelectedRow({ id: "" });
+    }
+    setSelectedRow({ id });
+  };
 
   const columns: ColumnDef<Site>[] = [
     {
@@ -22,32 +31,32 @@ const Name = () => {
     },
     {
       accessorKey: "name",
+      header: "Name",
     },
     {
       accessorKey: "email",
+      header: "Email",
     },
     {
       accessorKey: "password",
+      header: "Password",
+      cell: ({ getValue, row }: { getValue: () => any; row: Row<Site> }) => {
+        return (
+          <button onClick={() => handleShowPassword(row.id)}>
+            {selectedRow.id === row.id ? getValue() : "********************"}
+          </button>
+        );
+      },
     },
     {
       accessorKey: "dateCreated",
+      header: "Date Created",
+      cell: (props) => {
+        return <span>{props.getValue<Date>().toLocaleDateString()}</span>;
+      },
     },
   ];
 
-  // const columns: ColumnDef<InferQueryOutput<"site.getSite">>[] = [
-  //   {
-  //     accessorKey: "",
-  //   },
-  //   {
-  //     accessorKey: "name",
-  //   },
-  //   {
-  //     accessorKey: "email",
-  //   },
-  //   {
-  //     accessorKey: "password",
-  //   },
-  // ];
   const table = useReactTable({
     data: sites,
     columns,
@@ -82,10 +91,10 @@ const Name = () => {
         </button>
       </section>
       <section>
-        <table>
+        <table className="w-full">
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id}>
+              <tr key={headerGroup.id} className="text-left">
                 {headerGroup.headers.map((header) => (
                   <th key={header.id}>
                     {header.isPlaceholder
