@@ -11,6 +11,11 @@ export const trpc = createReactQueryHooks<AppRouter>();
 export type TQuery = keyof AppRouter["_def"]["queries"];
 
 /**
+ * Enum containing all api mutation paths
+ */
+export type TMutation = keyof AppRouter["_def"]["mutations"];
+
+/**
  * This is a helper method to infer the output of a query resolver
  * @example type HelloOutput = InferQueryOutput<'hello'>
  */

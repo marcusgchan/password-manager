@@ -7,16 +7,15 @@
 }
 
 .header {
-  @apply bg-green;
+  @apply bg-blue;
   grid-area: header;
 }
 
 .nav {
-  @apply bg-violet;
   grid-area: nav;
 }
 
 .content {
   grid-area: content;
-  @apply p-2;
+  @apply p-4 overflow-scroll;
 }

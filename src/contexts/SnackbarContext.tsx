@@ -5,7 +5,7 @@ import React, {
   useReducer,
   useRef,
 } from "react";
-import { SnackNotification } from "../shared/types";
+import { SnackNotification } from "../types";
 
 const SnackbarContext = createContext<SnackNotification[]>(null!);
 const SnackbarDispatchContext = createContext<React.Dispatch<SnackAction>>(

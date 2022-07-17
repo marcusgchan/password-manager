@@ -1,7 +1,7 @@
 import React from "react";
 import NextHead from "next/head";
 
-const Header = ({ title }: { title: string }) => {
+const Head = ({ title }: { title: string }) => {
   return (
     <NextHead>
       <title>{title}</title>
@@ -9,4 +9,4 @@ const Header = ({ title }: { title: string }) => {
   );
 };
 
-export default Header;
+export default Head;

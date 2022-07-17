@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import Layout from "../../../shared/components/layout/Layout";
+import Layout from "../../../components/layout/Layout";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { trpc } from "../../../utils/trpc";
@@ -8,9 +8,10 @@ import {
   ColumnDef,
   useReactTable,
   getCoreRowModel,
-  flexRender,
   Row,
 } from "@tanstack/react-table";
+import Table from "../../../components/Table";
+import { FaEdit, FaTrash } from "react-icons/fa";
 
 const Name = () => {
   const router = useRouter();
@@ -27,9 +28,6 @@ const Name = () => {
 
   const columns: ColumnDef<Site>[] = [
     {
-      accessorKey: "id",
-    },
-    {
       accessorKey: "name",
       header: "Name",
     },
@@ -42,7 +40,10 @@ const Name = () => {
       header: "Password",
       cell: ({ getValue, row }: { getValue: () => any; row: Row<Site> }) => {
         return (
-          <button onClick={() => handleShowPassword(row.id)}>
+          <button
+            onClick={() => handleShowPassword(row.id)}
+            className="block w-full text-left"
+          >
             {selectedRow.id === row.id ? getValue() : "********************"}
           </button>
         );
@@ -53,6 +54,24 @@ const Name = () => {
       header: "Date Created",
       cell: (props) => {
         return <span>{props.getValue<Date>().toLocaleDateString()}</span>;
+      },
+    },
+    {
+      header: "Action",
+      cell: (props) => {
+        return (
+          <div className="flex gap-2">
+            <button
+              onClick={() => router.push(`${router.asPath}/edit`)}
+              className="border-2 border-black flex justify-center align-center p-1 rounded"
+            >
+              <FaEdit className="text-2xl" />
+            </button>
+            <button className="border-2 border-black flex justify-center align-center p-1 rounded">
+              <FaTrash className="text-2xl" />
+            </button>
+          </div>
+        );
       },
     },
   ];
@@ -90,36 +109,8 @@ const Name = () => {
           />
         </button>
       </section>
-      <section>
-        <table className="w-full">
-          <thead>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id} className="text-left">
-                {headerGroup.headers.map((header) => (
-                  <th key={header.id}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                  </th>
-                ))}
-              </tr>
-            ))}
-          </thead>
-          <tbody>
-            {table.getRowModel().rows.map((row) => (
-              <tr key={row.id}>
-                {row.getVisibleCells().map((cell) => (
-                  <td key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <section className="flex overflow-scroll">
+        <Table table={table} />
       </section>
     </Layout>
   );

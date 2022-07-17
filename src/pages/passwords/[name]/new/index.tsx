@@ -1,5 +1,5 @@
 import React, { ChangeEvent, FormEvent, useId, useState, useRef } from "react";
-import Head from "../../../../shared/components/Head";
+import Head from "../../../../components/Head";
 import { useSession } from "next-auth/react";
 import { trpc } from "../../../../utils/trpc";
 import { Session } from "next-auth";
@@ -150,5 +150,7 @@ const Row = ({
     </>
   );
 };
+
+New.auth = true;
 
 export default New;

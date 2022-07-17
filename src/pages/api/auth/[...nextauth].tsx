@@ -15,9 +15,9 @@ export const authOptions: NextAuthOptions = {
     // ...add more providers here
   ],
   callbacks: {
-    async session({ session, token, user }) {
+    async session({ session, user }) {
       // Send properties to the client, like an access_token from a provider.
-      session.id = user.id;
+      session.id = user.id; // If this is removed, check types.d.ts file
       return session;
     },
   },
