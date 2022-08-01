@@ -39,7 +39,14 @@ const New = ({
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<Inputs>({ resolver: zodResolver(schema) });
+  } = useForm<Inputs>({
+    resolver: zodResolver(schema),
+    defaultValues: {
+      name: site?.name ?? undefined,
+      email: site?.email ?? undefined,
+      password: site?.password,
+    },
+  });
 
   function goBack(e: FormEvent) {
     e.preventDefault();

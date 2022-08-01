@@ -33,7 +33,16 @@ export const siteRouter = trpc
   .query("getSite", {
     input: z.number().int().max(255),
     async resolve(req) {
-      return await prisma.site.findUnique({ where: { id: req.input } });
+      const encryptedSite = await prisma.site.findFirst({
+        where: { id: req.input, user: { id: req.ctx.user.id } },
+      });
+      if (encryptedSite) {
+        return {
+          ...encryptedSite,
+          password: decrypt(encryptedSite.password),
+        };
+      }
+      return null;
     },
   })
   .query("getSites", {
@@ -41,6 +50,7 @@ export const siteRouter = trpc
       const encryptedData = await prisma.site.findMany({
         where: {
           userId: ctx.user.id,
+          user: { id: ctx.user.id },
         },
       });
       const data = encryptedData.map((data) => ({
@@ -68,10 +78,14 @@ export const siteRouter = trpc
   .mutation("updateSite", {
     input: updateSiteSchema,
     async resolve(req) {
-      const updatedSite = await prisma.site.update({
-        where: { id: req.input.id },
-        data: req.input,
+      const update = await prisma.user.update({
+        where: { id: req.ctx.user.id },
+        data: {
+          sites: {
+            update: { where: { id: req.input.id }, data: req.input },
+          },
+        },
       });
-      return updatedSite;
+      return update;
     },
   });

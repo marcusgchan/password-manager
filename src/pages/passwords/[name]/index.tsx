@@ -62,7 +62,9 @@ const Name = () => {
         return (
           <div className="flex gap-2">
             <button
-              onClick={() => router.push(`${router.asPath}/edit`)}
+              onClick={() => {
+                router.push(`${router.asPath}/edit/${props.row.original.id}`);
+              }}
               className="border-2 border-black flex justify-center align-center p-1 rounded"
             >
               <FaEdit className="text-2xl" />
